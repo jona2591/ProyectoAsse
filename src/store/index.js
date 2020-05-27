@@ -5,10 +5,22 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    Pliegos:[]
   },
-  mutations: {
+  mutations: {  
+    AgregarPliego(state, Pliego){
+      state.Pliegos.push(Pliego);
+    },
+     
+    // firebase.database().ref('Pliegos').push(this.Pliego);
+
+    // AgregarPliego(state, Pliego){
+    //   state.Pliegos.push(Pliego);
   },
   actions: {
+    // AgregarPliegoAction(context, pliego){
+    //     context.commit('AgregarPliego', pliego);
+    // }
   },
   modules: {
   }

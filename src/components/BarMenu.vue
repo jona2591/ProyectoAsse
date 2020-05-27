@@ -2,21 +2,39 @@
   <div class="BarMenu bg-dark">
     <ul>
       <li class="menu">
-        <span>
-          <i class="fas fa-home"></i>
+        <span class="efect">
+          <i class="far fa-caret-square-right"></i>
+          <router-link to="/"> Crear Pliego</router-link>
+        </span>
+      </li>
+      <li class="menu">
+        <span class="efect">
+          <i class="far fa-caret-square-right"></i>
+          <router-link to="/Ingreso"> Ingreso</router-link>
+        </span>
+      </li>
+      <li class="menu">
+        <span class="efect">
+          <i class="far fa-caret-square-right"></i>
+          <router-link to="/Egreso"> Egreso</router-link>
+        </span>
+      </li>
+            <li class="menu">
+        <span class="efect">
+          <i class="far fa-caret-square-right"></i>
+          <router-link to="/Modificacion"> Modificacion</router-link>
+        </span>
+      </li>
+      <li class="menu">
+        <span class="efect">
+          <i class="far fa-caret-square-right"></i>
           <router-link to="/Movimientos"> Movimientos</router-link>
         </span>
       </li>
       <li class="menu">
-        <span>
-          <i class="far fa-address-card"></i>
+        <span class="efect">
+          <i class="far fa-caret-square-right"></i>
           <router-link to="/Nomina"> Crear Nomina</router-link>
-        </span>
-      </li>
-      <li class="menu">
-        <span>
-          <i class="fas fa-envelope-open-text"></i>
-          <router-link to="/salir"> Salir</router-link>
         </span>
       </li>
     </ul>
@@ -25,7 +43,7 @@
 
 <script>
 export default {
-  name: "BarMenu"
+  name: "BarMenu",
 };
 </script>
 
@@ -65,7 +83,7 @@ a:hover {
 .menu:hover::before {
   width: 97%;
 }
-span {
+.efect {
   mix-blend-mode: difference;
   padding-left: 5px;
   padding-right: 10px;
