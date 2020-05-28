@@ -35,30 +35,45 @@
 
 <script>
 export default {
-  name:'Registrar',
+  name: "Registrar",
   data() {
-    return { usuario: "", email: "", password: "", error: "", nombre:"" };
+    return { usuario: "", email: "", password: "", error: "" };
   },
   methods: {
     registrar() {
+      var user = null;
+      const displayName = this.usuario;
       if (this.usuario && this.email && this.password) {
-        firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
+        firebase
+          .auth()
+          .createUserWithEmailAndPassword(this.email, this.password)
+          .then(() => {
+            user = firebase.auth().currentUser;
+            user.sendEmailVerification();
+          })
+          .then(() => {
+            user
+              .updateProfile({
+                displayName: displayName,
+                photoURL: "photoURL"
+              })
+              .then(() => {
+                // mandar al padre
+              });
+          });
       } else {
         this.error = "todos los campos son obligatorios";
       }
     }
   },
-  created(){
-        firebase.auth().onAuthStateChanged(user => {
-      if(user){
-        this.nombre = user.displayName
-        console.log(this.nombre);
-        
-      }else{
-        this.nombre = null
+  created() {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        this.usuario = user.displayName;
+      } else {
+        this.usuario = null;
       }
-    })
-    
+    });
   }
 };
 </script>
