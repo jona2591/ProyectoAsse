@@ -1,11 +1,11 @@
 <template>
   <div id="app">
     <div id="nav" class="header bg-dark">
-      <nav v-if="usuario">
+      <nav v-if="$store.state.UserLog">
         <ul class="nav justify-content-end">
           <h1 class="title">Gestion de Documentos CHPR</h1>
           <li class="nav-item">
-            <a class="nav-link">Usuario: {{ usuario }}</a>
+            <a class="nav-link">Usuario: {{ $store.state.UserLog }}</a>
           </li>
           <button class="btn btn-success btn-sm m-2" @click="cerrar">Cerrar Secion</button>
         </ul>
@@ -56,13 +56,20 @@ export default {
     }
   },
   created() {
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        this.usuario = user.displayName;
-      } else {
-        this.usuario = null;
-      }
-    });
+    let user = firebase.auth().currentUser;
+    if (user) {
+      this.$store.state.UserLog = user.displayName;
+    } else {
+      this.UserLog = null;
+    }
+
+    // firebase.auth().onAuthStateChanged(user => {
+    //   if (user) {
+    //     this.usuario = user.displayName;
+    //   } else {
+    //     this.usuario = null;
+    //   }
+    // });
   }
 };
 </script>

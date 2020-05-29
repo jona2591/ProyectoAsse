@@ -55,10 +55,9 @@ export default {
             user
               .updateProfile({
                 displayName: displayName,
-                photoURL: "photoURL"
               })
               .then(() => {
-                // mandar al padre
+                this.$store.commit('observer');
               });
           });
       } else {

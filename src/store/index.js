@@ -5,13 +5,20 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    Pliegos:[]
+    UserLog: null
   },
-  mutations: {  
-    AgregarPliego(state, Pliego){
-      state.Pliegos.push(Pliego);
+  mutations: {
+
+    observer() {
+
+      let user = firebase.auth().currentUser;
+      if (user) {
+        this.state.UserLog = user.displayName;
+      } else {
+        this.UserLog = null;
+      }
     },
-     
+
     // firebase.database().ref('Pliegos').push(this.Pliego);
 
     // AgregarPliego(state, Pliego){
