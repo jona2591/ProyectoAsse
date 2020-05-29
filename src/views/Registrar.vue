@@ -58,6 +58,8 @@ export default {
               })
               .then(() => {
                 this.$store.commit('observer');
+              }).then(() => {
+                this.$router.push({ name: "Crear" });
               });
           });
       } else {

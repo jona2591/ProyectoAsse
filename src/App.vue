@@ -15,7 +15,7 @@
       </div>
       <div class="menu-line">
         <div class="boton">
-          <i style="color:white" class="btn btn-dark fas fa-bars" @click="menu = !menu">Menu</i>
+          <i style="color:white" class="btn btn-dark fas fa-bars" @click="menu = !menu"> Menu</i>
         </div>
         <transition name="slide-fade">
           <BarMenu v-show="menu" />
@@ -46,6 +46,9 @@ export default {
     };
   },
   methods: {
+    logaut(){
+      this.$store.commit("cerrar");
+    },
     cerrar() {
       firebase
         .auth()
@@ -56,20 +59,7 @@ export default {
     }
   },
   created() {
-    let user = firebase.auth().currentUser;
-    if (user) {
-      this.$store.state.UserLog = user.displayName;
-    } else {
-      this.UserLog = null;
-    }
-
-    // firebase.auth().onAuthStateChanged(user => {
-    //   if (user) {
-    //     this.usuario = user.displayName;
-    //   } else {
-    //     this.usuario = null;
-    //   }
-    // });
+    this.$store.commit("observer");
   }
 };
 </script>

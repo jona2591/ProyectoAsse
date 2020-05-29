@@ -21,6 +21,7 @@
             <th scope="col">Egreso</th>
             <th scope="col">Destino</th>
             <th scope="col">Estado</th>
+            <th scope="col">Usuario</th>
           </tr>
         </thead>
         <tbody>
@@ -36,6 +37,7 @@
             <td>{{ pliego.Egreso }}</td>
             <td>{{ pliego.Destino }}</td>
             <td>{{ pliego.Estado }}</td>
+            <td>{{ pliego.Usuario }}</td>
           </tr>
         </tbody>
       </table>

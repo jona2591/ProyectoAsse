@@ -10,24 +10,15 @@ export default new Vuex.Store({
   mutations: {
 
     observer() {
-
       let user = firebase.auth().currentUser;
       if (user) {
         this.state.UserLog = user.displayName;
       } else {
-        this.UserLog = null;
+        this.state.UserLog = null;
       }
     },
-
-    // firebase.database().ref('Pliegos').push(this.Pliego);
-
-    // AgregarPliego(state, Pliego){
-    //   state.Pliegos.push(Pliego);
   },
   actions: {
-    // AgregarPliegoAction(context, pliego){
-    //     context.commit('AgregarPliego', pliego);
-    // }
   },
   modules: {
   }

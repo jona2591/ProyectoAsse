@@ -4,7 +4,7 @@
       <form>
         <div class="form-group col-md-3 mb-2">
           <label for="numero">Numero Pliego</label>
-          <input type="number" class="form-control" id="numero" v-model="Pliego.numero" min="0"/>
+          <input type="number" class="form-control" id="numero" v-model="Pliego.numero" min="0" />
         </div>
         <div class="form-group col-md-4 mb-2">
           <label for="FechaCreacion">Fecha de Creacion</label>
@@ -28,21 +28,49 @@
         <div class="row ml-2">
           <div class="form-group col-md-6">
             <div class="custom-control custom-radio">
-              <input type="radio" id="customRadio1" name="Procedimiento" class="custom-control-input" v-model="Pliego.Procedimiento" value="LA"/>
+              <input
+                type="radio"
+                id="customRadio1"
+                name="Procedimiento"
+                class="custom-control-input"
+                v-model="Pliego.Procedimiento"
+                value="LA"
+              />
               <label class="custom-control-label" for="customRadio1">LA</label>
             </div>
             <div class="custom-control custom-radio">
-              <input type="radio" id="customRadio2" name="Procedimiento" class="custom-control-input" v-model="Pliego.Procedimiento" value="LP"/>
+              <input
+                type="radio"
+                id="customRadio2"
+                name="Procedimiento"
+                class="custom-control-input"
+                v-model="Pliego.Procedimiento"
+                value="LP"
+              />
               <label class="custom-control-label" for="customRadio2">LP</label>
             </div>
           </div>
           <div class="form-group col-md-6">
             <div class="custom-control custom-radio">
-              <input type="radio" id="customRadio3" name="Procedimiento" class="custom-control-input" v-model="Pliego.Procedimiento" value="CDE"/>
+              <input
+                type="radio"
+                id="customRadio3"
+                name="Procedimiento"
+                class="custom-control-input"
+                v-model="Pliego.Procedimiento"
+                value="CDE"
+              />
               <label class="custom-control-label" for="customRadio3">CDE</label>
             </div>
             <div class="custom-control custom-radio">
-              <input type="radio" id="customRadio4" name="Procedimiento" class="custom-control-input" v-model="Pliego.Procedimiento" value="Pregon"/>
+              <input
+                type="radio"
+                id="customRadio4"
+                name="Procedimiento"
+                class="custom-control-input"
+                v-model="Pliego.Procedimiento"
+                value="Pregon"
+              />
               <label class="custom-control-label" for="customRadio4">Pregon</label>
             </div>
           </div>
@@ -83,9 +111,13 @@
           <td>{{ Pliego.Objeto }}</td>
           <td>{{ Pliego.Procedimiento }}</td>
           <td>{{ Pliego.Estado }}</td>
-          <td><button class="btn btn-success m-2" @click="Borrar(id)">Borrar</button>
-          <button class="btn btn-success m-2" @click="Editar(id,Pliego.numero,Pliego.FechaCreacion,Pliego.Servicio,Pliego.Objeto,Pliego.Procedimiento,Pliego.Estado)">Editar</button>
-          </td>          
+          <td>
+            <button class="btn btn-success m-2" @click="Borrar(id)">Borrar</button>
+            <button
+              class="btn btn-success m-2"
+              @click="Editar(id,Pliego.numero,Pliego.FechaCreacion,Pliego.Servicio,Pliego.Objeto,Pliego.Procedimiento,Pliego.Estado,Pliego.Usuario)"
+            >Editar</button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -93,7 +125,6 @@
 </template>
 
 <script>
-
 export default {
   name: "Formulario",
   data() {
@@ -111,57 +142,84 @@ export default {
         "Arquitectura",
         "Mantenimiento"
       ],
-      Pliegos:[],
+      Pliegos: [],
       Pliego: {
-        numero:'',
-        FechaCreacion:'',
-        Servicio:'',
-        Objeto:'',
-        Procedimiento:'',
-        Estado:'',
-        Lugar:'',
-        Tramite:'',
-        Ingreso: '',
-        Egreso: '',
-        Destino:''
+        numero: "",
+        FechaCreacion: "",
+        Servicio: "",
+        Objeto: "",
+        Procedimiento: "",
+        Estado: "",
+        Lugar: "",
+        Tramite: "",
+        Ingreso: "",
+        Egreso: "",
+        Destino: "",
+        Usuario: ""
       }
     };
   },
   methods: {
     Guardar() {
-      if (this.Pliego.numero === '' | this.Pliego.FechaCreacion === '' | this.Pliego.Servicio === '' |
-      this.Pliego.Objeto ===''| this.Pliego.Procedimiento ===''| this.Pliego.Estado ===''){
+      if (
+        (this.Pliego.numero === "") |
+        (this.Pliego.FechaCreacion === "") |
+        (this.Pliego.Servicio === "") |
+        (this.Pliego.Objeto === "") |
+        (this.Pliego.Procedimiento === "") |
+        (this.Pliego.Estado === "")
+      ) {
         swal("Error!", "Debe completar todos los campos", "error");
-      }else{
-      firebase.database().ref('Pliegos').push(this.Pliego);
-      this.Pliego.numero = '',
-      this.Pliego.FechaCreacion ='',
-      this.Pliego.Servicio ='',
-      this.Pliego.Objeto ='',
-      this.Pliego.Procedimiento ='',
-      this.Pliego.Estado ='',
-      this.Pliego.Lugar ='',
-      this.Pliego.Tramite ='',
-      this.Pliego.Ingreso ='',
-      this.Pliego.Egreso ='',
-      this.Pliego.Destino =''
-      swal("Se guardo correctamente el documento!", {icon: "success",});
+      } else {
+        firebase
+          .database()
+          .ref("Pliegos")
+          .push(this.Pliego);
+          (this.Pliego.numero = ""),
+          (this.Pliego.FechaCreacion = ""),
+          (this.Pliego.Servicio = ""),
+          (this.Pliego.Objeto = ""),
+          (this.Pliego.Procedimiento = ""),
+          (this.Pliego.Estado = ""),
+          (this.Pliego.Lugar = ""),
+          (this.Pliego.Tramite = ""),
+          (this.Pliego.Ingreso = ""),
+          (this.Pliego.Egreso = ""),
+          (this.Pliego.Destino = "");
+        swal("Se guardo correctamente el documento!", { icon: "success" });
       }
     },
 
-    Borrar(id){
-        swal({title: "Esta seguro?", text: "Si decea eliminar precione OK, caso contrario cancelar!", icon: "warning", buttons: true, dangerMode: true,})
-        .then((willDelete) => {
+    Borrar(id) {
+      swal({
+        title: "Esta seguro?",
+        text: "Si decea eliminar precione OK, caso contrario cancelar!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true
+      }).then(willDelete => {
         if (willDelete) {
-          firebase.database().ref('Pliegos/'+id).remove();
-          swal("Se elimino correctamente el documento!", {icon: "success",});
+          firebase
+            .database()
+            .ref("Pliegos/" + id)
+            .remove();
+          swal("Se elimino correctamente el documento!", { icon: "success" });
         } else {
-            swal("No se ha eliminado el documento!");
-          }
+          swal("No se ha eliminado el documento!");
+        }
       });
     },
-    
-    Editar(id,numero,FechaCreacion,Servicio,Objeto,Procedimiento,Estado){
+
+    Editar(
+      id,
+      numero,
+      FechaCreacion,
+      Servicio,
+      Objeto,
+      Procedimiento,
+      Estado,
+      Usuario
+    ) {
       this.guardando = false;
       this.modificando = true;
       this.cancelando = true;
@@ -171,16 +229,17 @@ export default {
       this.Pliego.Objeto = Objeto;
       this.Pliego.Procedimiento = Procedimiento;
       this.Pliego.Estado = Estado;
-    
-      boton.onclick = function(){
-        var PliegoRef = firebase.database().ref('Pliegos/'+id);
-        
-        var numero = document.getElementById('numero').value;
-        var FechaCreacion = document.getElementById('FechaCreacion').value;
-        var Servicio = document.getElementById('Servicio').value;
-        var Objeto = document.getElementById('Objeto').value;
-        var Procedimiento = $('input[name=Procedimiento]:checked').val();
-        var Estado = document.getElementById('Estado').value;
+      this.Pliego.Usuario = Usuario;
+
+      boton.onclick = function() {
+        var PliegoRef = firebase.database().ref("Pliegos/" + id);
+
+        var numero = document.getElementById("numero").value;
+        var FechaCreacion = document.getElementById("FechaCreacion").value;
+        var Servicio = document.getElementById("Servicio").value;
+        var Objeto = document.getElementById("Objeto").value;
+        var Procedimiento = $("input[name=Procedimiento]:checked").val();
+        var Estado = document.getElementById("Estado").value;
 
         return PliegoRef.update({
           numero,
@@ -189,33 +248,41 @@ export default {
           Objeto,
           Procedimiento,
           Estado,
-        })
-        .then(function(){
-          document.getElementById('numero').value = '';
-          document.getElementById('FechaCreacion').value = '';
-          document.getElementById('Servicio').value = '';
-          document.getElementById('Objeto').value = '';
-          document.getElementById('Estado').value = '';
-          swal("Exito!", "Se guardaron los cambios en el documento.", "success");
-        })
-      }
+          Usuario
+        }).then(function() {
+          document.getElementById("numero").value = "";
+          document.getElementById("FechaCreacion").value = "";
+          document.getElementById("Servicio").value = "";
+          document.getElementById("Objeto").value = "";
+          document.getElementById("Estado").value = "";
+          swal(
+            "Exito!",
+            "Se guardaron los cambios en el documento.",
+            "success"
+          );
+        });
+      };
     },
-    Cancelar(){
-      this.guardando = true
-      this.modificando = false
-      this.cancelando = false
-      this.Pliego.numero = '',
-      this.Pliego.FechaCreacion ='',
-      this.Pliego.Servicio ='',
-      this.Pliego.Objeto ='',
-      this.Pliego.Procedimiento ='',
-      this.Pliego.Estado =''
+    Cancelar() {
+      this.guardando = true;
+      this.modificando = false;
+      this.cancelando = false;
+      (this.Pliego.numero = ""),
+        (this.Pliego.FechaCreacion = ""),
+        (this.Pliego.Servicio = ""),
+        (this.Pliego.Objeto = ""),
+        (this.Pliego.Procedimiento = ""),
+        (this.Pliego.Estado = "");
     }
   },
-  created(){
-    firebase.database().ref('Pliegos').on('value', (listar)=>{
-      this.Pliegos = listar.val();
-    })
+  created() {
+    firebase
+      .database()
+      .ref("Pliegos")
+      .on("value", listar => {
+        this.Pliegos = listar.val();
+      });
+    this.Pliego.Usuario = this.$store.state.UserLog;
   }
 };
 </script>

@@ -34,7 +34,7 @@
       <li class="menu">
         <span class="efect">
           <i class="far fa-caret-square-right"></i>
-          <router-link to="/Nomina"> Crear Nomina</router-link>
+          <router-link to="/Registrar"> Crear Usuario</router-link>
         </span>
       </li>
     </ul>
