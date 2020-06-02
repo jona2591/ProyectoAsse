@@ -4,11 +4,11 @@
       <form>
         <div class="form-group col-md-3 mb-2">
           <label for="numero">Numero Pliego</label>
-          <input type="number" class="form-control" id="numero" v-model="Pliego.numero" disabled/>
+          <input type="number" class="form-control" id="numero" v-model="Pliego.numero" disabled />
         </div>
         <div class="form-group col-md-5 mb-2">
           <label for="Lugar">Lugar Actual</label>
-          <input type="text" class="form-control" id="Lugar" disabled v-model="Pliego.Lugar"/>
+          <input type="text" class="form-control" id="Lugar" disabled v-model="Pliego.Lugar" />
         </div>
         <div class="form-group col-md-8 mb-2">
           <label for="Objeto">Objeto del llamado</label>
@@ -21,7 +21,7 @@
       <form>
         <div class="form-group col-md-5 mb-2">
           <label for="Egreso">Egreso</label>
-          <input type="date" class="form-control" id="Egreso" v-model="Pliego.Egreso"/>
+          <input type="date" class="form-control" id="Egreso" v-model="Pliego.Egreso" />
         </div>
         <div class="form-group col-md-5 mb-2">
           <label for="Destino">Servicio de Destino</label>
@@ -32,9 +32,11 @@
         </div>
       </form>
     </div>
-    <button class="btn btn-green" id="boton" v-show="modificando">Egresar Pliego</button>
-    <button class="btn btn-green" @click="Cancelar" v-show="cancelando">Cancelar</button>
-        <table class="table table-striped table-dark table-sm">
+    <div v-if="modificando">
+      <button class="btn btn-green" id="boton" @click="Modificar(newPliego)">Egresar Pliego</button>
+      <button class="btn btn-green" @click="Cancelar">Cancelar</button>
+    </div>
+    <table class="table table-striped table-dark table-sm">
       <thead>
         <tr>
           <th scope="col">Nº Pliego</th>
@@ -46,12 +48,14 @@
           <th scope="row">{{ Pliego.numero }}</th>
           <td>{{ Pliego.Objeto }}</td>
           <td>
-          <button class="btn btn-success m-2" @click="Editar(id,Pliego.numero,Pliego.Lugar,Pliego.Objeto,Pliego.Egreso,Pliego.Destino)">Egresar</button>
-          </td>          
+            <button
+              class="btn btn-success m-2"
+              @click="Editar(id,Pliego.numero,Pliego.Lugar,Pliego.Objeto,Pliego.Egreso,Pliego.Destino)"
+            >Egresar</button>
+          </td>
         </tr>
       </tbody>
     </table>
-
   </div>
 </template>
 
@@ -60,16 +64,18 @@ export default {
   name: "FormularioEgreso",
   data() {
     return {
-            modificando: false,
-      cancelando: false,
+      modificando: false,
+      Pliegos: [],
+      newPliego: "",
 
-      Pliegos:[],
       Pliego: {
-        numero:'',
-        Lugar:'',
-        Objeto:'',
-        Egreso:'',
-        Destino: '',
+        numero: "",
+        Lugar: "",
+        Objeto: "",
+        Egreso: "",
+        Destino: "",
+        Usuario: "",
+        Usermail:""
       },
 
       sectores: [
@@ -85,58 +91,68 @@ export default {
     };
   },
   methods: {
-    Editar(id,numero,Lugar,Objeto,Egreso,Destino){
-      this.modificando = true
-      this.cancelando = true
-      this.Pliego.numero = numero;
-      this.Pliego.Lugar = Lugar;
-      this.Pliego.Objeto = Objeto;
-      this.Pliego.Egreso = Egreso
-      this.Pliego.Destino = Destino;
-      
-      boton.onclick = function(){
-        var PliegoRef = firebase.database().ref('Pliegos/'+id);
-        
-        var numero = document.getElementById('numero').value;
-        var Lugar = document.getElementById('Lugar').value;
-        var Objeto = document.getElementById('Objeto').value;
-        var Egreso = document.getElementById('Egreso').value;
-        var Destino = document.getElementById('Destino').value;
-
-        if (numero === '' | Lugar === '' | Objeto === '' | Egreso === '' | Destino === '') {
-        swal("Error!", "Debe completar todos los campos", "error");
-      }else{        return PliegoRef.update({
-          numero,
-          Lugar,
-          Objeto,
-          Egreso,
-          Destino,
-        })
-        .then(function(){
-          document.getElementById('numero').value = '';
-          document.getElementById('Lugar').value = '';
-          document.getElementById('Objeto').value = '';
-          document.getElementById('Egreso').value = '';
-          document.getElementById('Destino').value = '';
-          swal("Exito!", "Se egreso el documento.", "success");
-        })}
+    Editar(id, numero, Lugar, Objeto, Egreso, Destino) {
+      if (Egreso) {
+        swal("Atencion!", "El documento ya fue egresado", "warning");
+      } else if (Lugar === '' ) {
+        swal("Atencion!", "El documento no fue ingresado", "warning");
+      } else {
+        this.modificando = true;
+        this.Pliego.numero = numero;
+        this.Pliego.Lugar = Lugar;
+        this.Pliego.Objeto = Objeto;
+        this.Pliego.Egreso = Egreso;
+        this.Pliego.Destino = Destino;
+        this.newPliego = id;
       }
     },
-    Cancelar(){
-      this.modificando = false
-      this.cancelando = false
-      this.Pliego.numero = '',
-      this.Pliego.Lugar ='',
-      this.Pliego.Objeto ='',
-      this.Pliego.Egreso ='',
-      this.Pliego.Destino =''
+    Modificar(id) {
+      var PliegoRef = firebase.database().ref("Pliegos/" + id);
+
+      var Egreso = this.Pliego.Egreso;
+      var Destino = this.Pliego.Destino;
+      var Usuario = this.Pliego.Usuario;
+      var Usermail = this.Pliego.Usermail;
+
+      (this.Pliego.numero = ""),
+        (this.Pliego.Lugar = ""),
+        (this.Pliego.Objeto = ""),
+        (this.Pliego.Egreso = ""),
+        (this.Pliego.Destino = "")
+
+      if ((Egreso === "") | (Destino === "")) {
+        swal("Error!", "Debe completar todos los campos", "error");
+      } else {
+        return PliegoRef.update({
+          Egreso,
+          Destino,
+          Usuario,
+          Usermail,
+        }).then(() => {
+          swal("Exito!", "Se egreso el documento.", "success");
+        });
+      }
+    },
+    Cancelar() {
+      this.modificando = false;
+      (this.Pliego.numero = ""),
+        (this.Pliego.Lugar = ""),
+        (this.Pliego.Objeto = ""),
+        (this.Pliego.Egreso = ""),
+        (this.Pliego.Destino = "");
     }
   },
 
-  created(){
-    firebase.database().ref('Pliegos').on('value', (listar)=>{
-      this.Pliegos = listar.val();
-    })
+  created() {
+    firebase
+      .database()
+      .ref("Pliegos")
+      .on("value", listar => {
+        this.Pliegos = listar.val();
+      });
+    this.Pliego.Usuario = this.$store.state.UserLog;
+    this.Pliego.Usermail = this.$store.state.Usermail;
+
   }
 };
 </script>

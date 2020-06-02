@@ -54,16 +54,17 @@ export default {
           .then(() => {
             user
               .updateProfile({
-                displayName: displayName,
+                displayName: displayName
               })
               .then(() => {
-                this.$store.commit('observer');
-              }).then(() => {
+                this.$store.commit("observer");
+              })
+              .then(() => {
                 this.$router.push({ name: "Crear" });
               });
           });
       } else {
-        this.error = "todos los campos son obligatorios";
+        swal("Error!", "Debe completar todos los campos", "error");
       }
     }
   },

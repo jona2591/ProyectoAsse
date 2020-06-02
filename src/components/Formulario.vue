@@ -86,11 +86,13 @@
         </div>
       </form>
     </div>
-
-    <button class="btn btn-green" @click="Guardar" v-show="guardando">Guardar</button>
-    <button class="btn btn-green" id="boton" v-show="modificando">Modificar</button>
-    <button class="btn btn-green" @click="Cancelar" v-show="cancelando">Cancelar</button>
-
+    <div v-if="!modificando">
+      <button class="btn btn-green" @click="Guardar">Guardar</button>
+    </div>
+    <div v-else>
+      <button class="btn btn-green" @click="Modificar(newPliego)">Modificar</button>
+      <button class="btn btn-green" @click="Cancelar">Cancelar</button>
+    </div>
     <table class="table table-striped table-dark table-sm">
       <thead>
         <tr>
@@ -112,10 +114,10 @@
           <td>{{ Pliego.Procedimiento }}</td>
           <td>{{ Pliego.Estado }}</td>
           <td>
-            <button class="btn btn-success m-2" @click="Borrar(id)">Borrar</button>
+            <button class="btn btn-success m-2" @click="Borrar(id, Pliego.Usermail)">Borrar</button>
             <button
               class="btn btn-success m-2"
-              @click="Editar(id,Pliego.numero,Pliego.FechaCreacion,Pliego.Servicio,Pliego.Objeto,Pliego.Procedimiento,Pliego.Estado,Pliego.Usuario)"
+              @click="Editar(id,Pliego.numero,Pliego.FechaCreacion,Pliego.Servicio,Pliego.Objeto,Pliego.Procedimiento,Pliego.Estado,Pliego.Usermail)"
             >Editar</button>
           </td>
         </tr>
@@ -129,9 +131,7 @@ export default {
   name: "Formulario",
   data() {
     return {
-      guardando: true,
       modificando: false,
-      cancelando: false,
       sectores: [
         "Compras",
         "Recursos Materiales",
@@ -142,6 +142,7 @@ export default {
         "Arquitectura",
         "Mantenimiento"
       ],
+      newPliego: "",
       Pliegos: [],
       Pliego: {
         numero: "",
@@ -155,7 +156,8 @@ export default {
         Ingreso: "",
         Egreso: "",
         Destino: "",
-        Usuario: ""
+        Usuario: "",
+        Usermail: ""
       }
     };
   },
@@ -175,7 +177,7 @@ export default {
           .database()
           .ref("Pliegos")
           .push(this.Pliego);
-          (this.Pliego.numero = ""),
+        (this.Pliego.numero = ""),
           (this.Pliego.FechaCreacion = ""),
           (this.Pliego.Servicio = ""),
           (this.Pliego.Objeto = ""),
@@ -190,89 +192,99 @@ export default {
       }
     },
 
-    Borrar(id) {
-      swal({
-        title: "Esta seguro?",
-        text: "Si decea eliminar precione OK, caso contrario cancelar!",
-        icon: "warning",
-        buttons: true,
-        dangerMode: true
-      }).then(willDelete => {
-        if (willDelete) {
-          firebase
-            .database()
-            .ref("Pliegos/" + id)
-            .remove();
-          swal("Se elimino correctamente el documento!", { icon: "success" });
-        } else {
-          swal("No se ha eliminado el documento!");
-        }
-      });
+    Borrar(id, Usermail) {
+      if (Usermail === this.Pliego.Usermail) {
+        swal({
+          title: "Esta seguro?",
+          text: "Si decea eliminar precione OK, caso contrario cancelar!",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true
+        }).then(willDelete => {
+          if (willDelete) {
+            firebase
+              .database()
+              .ref("Pliegos/" + id)
+              .remove();
+            swal("Se elimino correctamente el documento!", { icon: "success" });
+          } else {
+            swal("No se ha eliminado el documento!");
+          }
+        });
+      } else {
+        swal(
+          "Atencion!",
+          "Debe ser eliminado por el usuario creador de este documento",
+          "warning"
+        );
+      }
     },
 
-    Editar(
-      id,
-      numero,
-      FechaCreacion,
-      Servicio,
-      Objeto,
-      Procedimiento,
-      Estado,
-      Usuario
-    ) {
-      this.guardando = false;
-      this.modificando = true;
-      this.cancelando = true;
-      this.Pliego.numero = numero;
-      this.Pliego.FechaCreacion = FechaCreacion;
-      this.Pliego.Servicio = Servicio;
-      this.Pliego.Objeto = Objeto;
-      this.Pliego.Procedimiento = Procedimiento;
-      this.Pliego.Estado = Estado;
-      this.Pliego.Usuario = Usuario;
+    Editar(id, numero, FechaCreacion, Servicio, Objeto, Procedimiento, Estado,Usermail) {
+      if (Usermail === this.Pliego.Usermail) {
+        this.modificando = true;
+        this.Pliego.numero = numero;
+        this.Pliego.FechaCreacion = FechaCreacion;
+        this.Pliego.Servicio = Servicio;
+        this.Pliego.Objeto = Objeto;
+        this.Pliego.Procedimiento = Procedimiento;
+        this.Pliego.Estado = Estado;
+        this.newPliego = id;
+      }else{
+        swal(
+          "Atencion!",
+          "Debe ser editado por el usuario creador de este documento",
+          "warning"
+        );
+      }
+    },
+    Modificar(id) {
+      var PliegoRef = firebase.database().ref("Pliegos/" + id);
 
-      boton.onclick = function() {
-        var PliegoRef = firebase.database().ref("Pliegos/" + id);
+      var numero = this.Pliego.numero;
+      var FechaCreacion = this.Pliego.FechaCreacion;
+      var Servicio = this.Pliego.Servicio;
+      var Objeto = this.Pliego.Objeto;
+      var Estado = this.Pliego.Estado;
+      // var Usermail = this.Pliego.Usermail;
+      // var Usuario = this.Pliego.Usuario;
 
-        var numero = document.getElementById("numero").value;
-        var FechaCreacion = document.getElementById("FechaCreacion").value;
-        var Servicio = document.getElementById("Servicio").value;
-        var Objeto = document.getElementById("Objeto").value;
-        var Procedimiento = $("input[name=Procedimiento]:checked").val();
-        var Estado = document.getElementById("Estado").value;
+      this.Pliego.numero = "";
+      this.Pliego.FechaCreacion = "";
+      this.Pliego.Servicio = "";
+      this.Pliego.Objeto = "";
+      this.Pliego.Estado = "";
 
+      if (
+        (numero === "") |
+        (FechaCreacion === "") |
+        (Servicio === "") |
+        (Objeto === "") |
+        (Estado === "")
+      ) {
+        swal("Error!", "Debe completar todos los campos", "error");
+      } else {
         return PliegoRef.update({
           numero,
           FechaCreacion,
           Servicio,
           Objeto,
-          Procedimiento,
           Estado,
-          Usuario
-        }).then(function() {
-          document.getElementById("numero").value = "";
-          document.getElementById("FechaCreacion").value = "";
-          document.getElementById("Servicio").value = "";
-          document.getElementById("Objeto").value = "";
-          document.getElementById("Estado").value = "";
-          swal(
-            "Exito!",
-            "Se guardaron los cambios en el documento.",
-            "success"
-          );
+          // Usuario,
+          // Usermail
+        }).then(() => {
+          swal("Exito!", "Se egreso el documento.", "success");
         });
-      };
+      }
     },
     Cancelar() {
-      this.guardando = true;
       this.modificando = false;
-      this.cancelando = false;
-      (this.Pliego.numero = ""),
-        (this.Pliego.FechaCreacion = ""),
-        (this.Pliego.Servicio = ""),
-        (this.Pliego.Objeto = ""),
-        (this.Pliego.Procedimiento = ""),
-        (this.Pliego.Estado = "");
+      this.Pliego.numero = "";
+      this.Pliego.FechaCreacion = "";
+      this.Pliego.Servicio = "";
+      this.Pliego.Objeto = "";
+      this.Pliego.Procedimiento = "";
+      this.Pliego.Estado = "";
     }
   },
   created() {
@@ -283,6 +295,7 @@ export default {
         this.Pliegos = listar.val();
       });
     this.Pliego.Usuario = this.$store.state.UserLog;
+    this.Pliego.Usermail = this.$store.state.Usermail;
   }
 };
 </script>

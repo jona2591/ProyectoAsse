@@ -35,9 +35,10 @@
         </div>
       </form>
     </div>
-    <button class="btn btn-green" id="boton" v-show="modificando">Ingresar Pliego</button>
-    <button class="btn btn-green" @click="Cancelar" v-show="cancelando">Cancelar</button>
-
+    <div v-if="modificando">
+      <button class="btn btn-green" @click="Modificar(newPliego)">Ingresar Pliego</button>
+      <button class="btn btn-green" @click="Cancelar">Cancelar</button>
+    </div>
     <table class="table table-striped table-dark table-sm">
       <thead>
         <tr>
@@ -50,8 +51,11 @@
           <th scope="row">{{ Pliego.numero }}</th>
           <td>{{ Pliego.Objeto }}</td>
           <td>
-          <button class="btn btn-success m-2" @click="Editar(id,Pliego.numero,Pliego.Lugar,Pliego.Objeto,Pliego.Tramite,Pliego.Ingreso)">Ingresar</button>
-          </td>          
+            <button
+              class="btn btn-success m-2"
+              @click="Editar(id,Pliego.numero,Pliego.Lugar,Pliego.Objeto,Pliego.Tramite,Pliego.Ingreso)"
+            >Ingresar</button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -64,15 +68,16 @@ export default {
   data() {
     return {
       modificando: false,
-      cancelando: false,
-
-      Pliegos:[],
+      Pliegos: [],
+      newPliego: "",
       Pliego: {
-        numero:'',
-        Lugar:'',
-        Objeto:'',
-        Tramite:'',
-        Ingreso: '',
+        numero: "",
+        Lugar: "",
+        Objeto: "",
+        Tramite: "",
+        Ingreso: "",
+        Usuario: "",
+        Usermail:""
       },
 
       sectores: [
@@ -88,79 +93,85 @@ export default {
     };
   },
   methods: {
-    Editar(id,numero,Lugar,Objeto,Tramite,Ingreso){
-      this.modificando = true
-      this.cancelando = true
+    Editar(id, numero, Lugar, Objeto, Tramite, Ingreso) {
+      if (Ingreso) {
+      swal("Atencion!", "El documento ya fue ingresado", "warning");
+      }else{
+      this.modificando = true;
       this.Pliego.numero = numero;
       this.Pliego.Lugar = Lugar;
       this.Pliego.Objeto = Objeto;
-      this.Pliego.Tramite = Tramite
+      this.Pliego.Tramite = Tramite;
       this.Pliego.Ingreso = Ingreso;
-      
-      boton.onclick = function(){
-        var PliegoRef = firebase.database().ref('Pliegos/'+id);
-        
-        var numero = document.getElementById('numero').value;
-        var Lugar = document.getElementById('Lugar').value;
-        var Objeto = document.getElementById('Objeto').value;
-        var Tramite = document.getElementById('Tramite').value;
-        var Ingreso = document.getElementById('Ingreso').value;
-
-        if (numero === '' | Lugar === '' | Objeto === '' | Tramite === '' | Ingreso === '') {
-        swal("Error!", "Debe completar todos los campos", "error");
-      }else{
-        return PliegoRef.update({
-          numero,
-          Lugar,
-          Objeto,
-          Tramite,
-          Ingreso,
-        })
-        .then(function(){
-          document.getElementById('numero').value = '';
-          document.getElementById('Lugar').value = '';
-          document.getElementById('Objeto').value = '';
-          document.getElementById('Tramite').value = '';
-          document.getElementById('Ingreso').value = '';
-          swal("Exito!", "Se ingreso el documento.", "success");
-        })}
+      this.newPliego = id;
       }
     },
-    Cancelar(){
-      this.modificando = false
-      this.cancelando = false
-      this.Pliego.numero = '',
-      this.Pliego.Lugar ='',
-      this.Pliego.Objeto ='',
-      this.Pliego.Tramite ='',
-      this.Pliego.Ingreso =''
+    Modificar(id) {
+      var PliegoRef = firebase.database().ref("Pliegos/" + id);
+
+      var Lugar = this.Pliego.Lugar;
+      var Ingreso = this.Pliego.Ingreso;
+      var Tramite = this.Pliego.Tramite;
+      var Usuario = this.Pliego.Usuario;
+      var Usermail = this.Pliego.Usermail;
+
+        this.Pliego.numero = "",
+        this.Pliego.Lugar = "",
+        this.Pliego.Objeto = "",
+        this.Pliego.Ingreso = "",
+        this.Pliego.Tramite = "";
+
+      if ((Lugar === "") | (Ingreso === "") | (Tramite === "")) {
+        swal("Error!", "Debe completar todos los campos", "error");
+      } else {
+        return PliegoRef.update({
+          Lugar,
+          Ingreso,
+          Tramite,
+          Usuario,
+          Usermail,
+        }).then(() => {
+          swal("Exito!", "Se ingreso el documento.", "success");
+        });
+      }
+    },
+    Cancelar() {
+      this.modificando = false;
+      (this.Pliego.numero = ""),
+        (this.Pliego.Lugar = ""),
+        (this.Pliego.Objeto = ""),
+        (this.Pliego.Tramite = ""),
+        (this.Pliego.Ingreso = "");
     }
   },
 
-  created(){
-    firebase.database().ref('Pliegos').on('value', (listar)=>{
-      this.Pliegos = listar.val();
-    })
+  created() {
+    firebase
+      .database()
+      .ref("Pliegos")
+      .on("value", listar => {
+        this.Pliegos = listar.val();
+      });
+    this.Pliego.Usuario = this.$store.state.UserLog;
+    this.Pliego.Usermail = this.$store.state.Usermail;
   }
 
-  
-
-    // guardar() {
-    //   let { numero, Servicio, Tramite } = this.Pliego;
-    //   let Ingreso = this.Ingreso;
-    //   this.Pliego.Ingresos.push({
-    //     Ingreso
-    //   });
-    //   for (let index = 0; index < this.Pliego.Ingresos.length; index++) {
-    //     var Fingreso = this.Pliego.Ingresos[index];
-    //   }
-    //   this.Pliegos.push({
-    //     numero,
-    //     Servicio,
-    //     Tramite,
-    //     Fingreso
-    //   });
-    // }
+  // guardar() {
+  //   let { numero, Servicio, Tramite } = this.Pliego;
+  //   let Ingreso = this.Ingreso;
+  //   this.Pliego.Ingresos.push({
+  //     Ingreso
+  //   });
+  //   for (let index = 0; index < this.Pliego.Ingresos.length; index++) {
+  //     var Fingreso = this.Pliego.Ingresos[index];
+  //   }
+  //   this.Pliegos.push({
+  //     numero,
+  //     Servicio,
+  //     Tramite,
+  //     Fingreso
+  //   });
+  // }
 };
 </script>
 
